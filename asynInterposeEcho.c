@@ -25,6 +25,11 @@
 #define Z 
 #endif
 
+/* compatibility with older EPICS 3.14 versions */
+#ifndef epicsStrSnPrintEscaped
+#define epicsStrnEscapedFromRaw epicsStrSnPrintEscaped
+#endif
+
 typedef struct interposePvt {
     asynInterface octet;
     asynOctet     *pasynOctetDrv;
@@ -49,7 +54,7 @@ static asynStatus writeIt(void *ppvt, asynUser *pasynUser,
         if (status != asynSuccess) break;
         if (n != 1) {
             epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
-                "wrote %"Z"d chars instead of 1", n);
+                "wrote %" Z "d chars instead of 1", n);
             status = asynError;
             break;
         }
@@ -59,7 +64,7 @@ static asynStatus writeIt(void *ppvt, asynUser *pasynUser,
         if (status == asynTimeout)
         {
             epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
-                "timeout reading back char number %"Z"d", transfered);
+                "timeout reading back char number %" Z "d", transfered);
         }
         if (status != asynSuccess) break;
         if (n != 1 || echo[0] != data[0]) {
