@@ -1,7 +1,7 @@
 /*asynInterposeEcho.c */
 /***********************************************************************/
 
-/* Interpose for devices where each written char needs to read back
+/* Interpose for devices where each written char must be read back
  * before sending the next char.
  * 
  * Author: Dirk Zimoch
@@ -12,7 +12,6 @@
 #include <epicsString.h>
 #include <iocsh.h>
 
-#include <epicsExport.h>
 #include "asynDriver.h"
 #include "asynOctet.h"
 #include <epicsExport.h>
@@ -34,7 +33,7 @@ typedef struct interposePvt {
     asynInterface octet;
     asynOctet     *pasynOctetDrv;
     void          *drvPvt;
-}interposePvt;
+} interposePvt;
 
 /* asynOctet methods */
 static asynStatus writeIt(void *ppvt, asynUser *pasynUser,
@@ -46,7 +45,7 @@ static asynStatus writeIt(void *ppvt, asynUser *pasynUser,
     char echo[4];
     asynStatus status = asynSuccess;
     int eomReason;
-    
+
     while (transfered < numchars) {
         /* write one char at a time */
         status = pvt->pasynOctetDrv->write(pvt->drvPvt,
@@ -162,7 +161,7 @@ static asynOctet octet = {
 };
 
 /* asynOctet methods */
-epicsShareFunc int 
+epicsShareFunc int
 asynInterposeEcho(const char *portName, int addr)
 {
     interposePvt *pvt;
@@ -176,7 +175,7 @@ asynInterposeEcho(const char *portName, int addr)
     status = pasynManager->interposeInterface(portName, addr,
         &pvt->octet, &poctetasynInterface);
     if ((status!=asynSuccess) || !poctetasynInterface) {
-	printf("%s interposeInterface failed.\n", portName);
+        printf("%s interposeInterface failed.\n", portName);
         free(pvt);
         return -1;
     }
